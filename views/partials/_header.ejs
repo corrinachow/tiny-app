@@ -1,13 +1,20 @@
 <!-- views/partials/_header.ejs -->
 
 <nav class="navbar navbar-default" role="navigation">
-<div class="container-fluid">
-
-    <div class="navbar-header">
-        <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/urls">URLs</a></li>
-        </ul>
-    </div>
-</div>
+  <ul class="nav navbar-nav">
+      <li><a href="/urls">URLs index</a></li>
+  </ul>
+  <%if (!username) {%>
+  <form method="POST" action="/login">
+    <label for="uname">Username</label>
+    <input type=text id="uname" name="username">
+    <input type=submit value="login">
+  </form>
+  <%} else { %>
+  Welcome <%=username %>
+  <form method="POST" action="/logout">
+    <input type=submit value="logout">
+  </form>
+  <%}%>
 </nav>
+
