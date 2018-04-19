@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
     <% include ./partials/_header %>
 
 <body>
   <h1>ShortURL: <%= shortURL %></h1>
-  <p><a href="<%= urls %>">http://localhost:8080/u/<%= shortURL %></a> &xrarr; <%= urls %></p>
+  <p><a href="<%= longURL %>">http://localhost:8080/u/<%= shortURL %></a> &xrarr; <%= longURL %></p>
   <form method="POST" action="/urls/<%= shortURL %>">
-    <input type="text" name="longURL" value="<%= urls %>">
+    <input type="text" name="longURL" value="<%= longURL %>">
     <button>Update</button>
   </form>
 </body>

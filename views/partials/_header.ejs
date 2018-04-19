@@ -2,15 +2,16 @@
 
 <nav class="navbar navbar-default" role="navigation">
   <ul class="nav navbar-nav">
-      <li><a href="/urls">URLs index</a></li>
-  <%if (!user_id) {%>
-  <li><a href="/register">register</a></li>
-      <li><a href="/login">login</a></li>
-  <%} else { %>
-  <h1>Welcome <%=user_id %></h1>
-  <form method="POST" action="/logout">
-    <input type=submit value="logout">
-  </form>
+    <li><a href="/urls">URLs index</a></li>
+    <%if (!user) {%>
+    <li><a href="/register">register</a></li>
+    <li><a href="/login">login</a></li>
+    <%} else { %>
+    <h1>Welcome <%=user.email %></h1>
+    <form method="POST" action="/logout">
+      <input type=submit value="logout">
+    </form>
   <%}%>
+  </ul>
 </nav>
 
