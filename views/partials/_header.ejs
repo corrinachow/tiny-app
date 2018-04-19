@@ -3,15 +3,11 @@
 <nav class="navbar navbar-default" role="navigation">
   <ul class="nav navbar-nav">
       <li><a href="/urls">URLs index</a></li>
-  </ul>
-  <%if (!username) {%>
-  <form method="POST" action="/login">
-    <label for="uname">Username</label>
-    <input type=text id="uname" name="username">
-    <input type=submit value="login">
-  </form>
+  <%if (!user_id) {%>
+  <li><a href="/register">register</a></li>
+      <li><a href="/login">login</a></li>
   <%} else { %>
-  Welcome <%=username %>
+  <h1>Welcome <%=user_id %></h1>
   <form method="POST" action="/logout">
     <input type=submit value="logout">
   </form>
