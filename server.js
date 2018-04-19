@@ -22,8 +22,9 @@ app.get('/urls.json', (req, res) => {
 });
 
 const urlDatabase = {
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
+  'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca' },
+  '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com' },
+  '5x6rvqp': { userID:'user3RandomID', url:'https://wikipedia.org' }
 };
 
 const users = {
@@ -67,6 +68,18 @@ function getUser(email) {
   return false;
 }
 
+function urlsForUser(id) {
+  const urls = {};
+  const shortURLs = Object.keys(urlDatabase);
+  console.log(shortURLs)
+  for (const shortURL of shortURLs) {
+    if (urlDatabase[shortURL].userID === id) {
+      urls[shortURL] = urlDatabase[shortURL].url;
+    }
+  }
+  return urls;
+}
+
 app.get('/register', (req, res) => {
   let templateVars = { urls: urlDatabase,
     user: users[req.cookies.user_id]
@@ -89,7 +102,6 @@ app.post('/register', (req, res) => {
       email: email,
       password: password,
     };
-
     users[newUser['id']] = newUser;
     res.cookie('user_id', newUser.id);
     let templateVars = { urls: urlDatabase,
@@ -106,8 +118,6 @@ app.post('/logout', (req, res) => {
 /* HOME PAGE */
 
 app.get('/' , (req, res) => {
-
-  console.log(req.cookies);
   let templateVars = { urls: urlDatabase,
   user: users[req.cookies.user_id]}
   res.render('urls_index', templateVars)
@@ -123,11 +133,10 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   //user returns either user Obj or false;
   const user = getUser(email);
-
   if (user && user.password === password) {
     //when setting cookies, always use just ID
     res.cookie('user_id', user.id);
-    res.redirect('/')
+    res.redirect('/urls')
   } else {
     res.status(403).send('403: User does not exist :(');
   }
@@ -136,44 +145,62 @@ app.post('/login', (req, res) => {
 /* POST LOGIN */
 
 app.get('/urls', (req, res) => {
-  console.log(req.cookies.user_id)
   let templateVars = {
     urls: urlDatabase,
     user: users[req.cookies.user_id]
   };
+  if (req.cookies.user_id) {
+    templateVars.urls = urlsForUser(req.cookies.user_id);
+  }
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
-  let templateVars = { urls: urlDatabase,
-    user: users[req.cookies.user_id]};
-  res.render('urls_new', templateVars);
+  if (!req.cookies.user_id) {
+    res.redirect('/login');
+  } else {
+    let templateVars = { urls: urlDatabase,
+      user: users[req.cookies.user_id]};
+    res.render('urls_new', templateVars);
+  };
 });
+
+/* MAKES NEW URL */
 
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomStr();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+    userID: req.cookies.user_id,
+    url: req.body.longURL};
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/:id', (req, res) => {
+  const { user_id } = req.cookies;
+  const { id } = req.params;
+  if (!user_id) {
+    res.send('Please log in to edit URLs');
+  } else if (urlDatabase[id].userID !== user_id) {
+    return res.send(`You don't have access to this page`)
+  };
   let templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    user: users[req.cookies.user_id]
+    shortURL: id,
+    longURL: urlDatabase[id].url,
+    user: users[user_id],
   };
   res.render('urls_show', templateVars);
 });
 
 app.post('/urls/:id', (req, res) => {
+  const { user_id } = req.cookies;
   const { shortURL } = req.params;
   const { longURL } = req.body;
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {userID: user_id, url:longURL};
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL].url;
   res.redirect(longURL);
 });
 

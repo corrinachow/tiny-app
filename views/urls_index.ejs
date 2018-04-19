@@ -7,14 +7,17 @@
     <% include ./partials/_header %>
 </header>
 <body>
-  <% for (const url in urls) {%>
-  <p><%= url %>: <%= urls[url] %>
-      <form method="POST" action="/urls/<%= url %>/delete">
+  <% if (!user) { %>
+  Please log in to view short URLs
+  <% } else { %>
+  <% for (const shortURL in urls) { %>
+  <p><%= shortURL %> : <%= urls[shortURL] %>
+      <form method="POST" action="/urls/<%= shortURL %>/delete">
         <button>Delet this</button>
       </form>
-      <a href="urls/<%= url %>"><button>Edit</button></a>
-  <%} %>
-  </p>
-  <a href="/urls/new">Shorten another URL</a>
+      <a href="urls/<%= shortURL %>"><button>Edit</button></a>
+      <%}%></p>
+      <a href="/urls/new">Shorten another URL</a>
+  <% } %>
 </body>
 </html>
