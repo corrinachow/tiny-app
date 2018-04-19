@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = 8080;
@@ -31,17 +32,17 @@ const users = {
   'userRandomID': {
     id: 'userRandomID',
     email: 'user@example.com',
-    password: 'purple-monkey-dinosaur'
+    password: bcrypt.hashSync('purple-monkey-dinosaur', 10)
   },
   'user2RandomID': {
     id: 'user2RandomID',
     email: 'user2@example.com',
-    password: 'dishwasher-funk'
+    password: bcrypt.hashSync('dishwasher-funk', 10)
   },
   'user3RandomID': {
     id: 'user3RandomID',
     email: 'example@example.com',
-    password: 'tests'
+    password: bcrypt.hashSync('tests', 10)
   }
 };
 
@@ -71,7 +72,6 @@ function getUser(email) {
 function urlsForUser(id) {
   const urls = {};
   const shortURLs = Object.keys(urlDatabase);
-  console.log(shortURLs)
   for (const shortURL of shortURLs) {
     if (urlDatabase[shortURL].userID === id) {
       urls[shortURL] = urlDatabase[shortURL].url;
@@ -89,7 +89,6 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body.email)
   if (!email || !password) {
     res.status(400).send('Invalid email or password');
     if (getUser(email)) {
@@ -100,7 +99,7 @@ app.post('/register', (req, res) => {
     const newUser = {
       id: generateRandomStr(),
       email: email,
-      password: password,
+      password: bcrypt.hashSync(password, 10),
     };
     users[newUser['id']] = newUser;
     res.cookie('user_id', newUser.id);
@@ -133,12 +132,12 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   //user returns either user Obj or false;
   const user = getUser(email);
-  if (user && user.password === password) {
+  if (user && bcrypt.compareSync(password, user.password)) {
     //when setting cookies, always use just ID
     res.cookie('user_id', user.id);
     res.redirect('/urls')
   } else {
-    res.status(403).send('403: User does not exist :(');
+    res.status(403).send('403: Email or password invalid');
   }
 });
 
