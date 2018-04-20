@@ -18,9 +18,9 @@ app.get('/urls.json', (req, res) => {
 });
 
 const urlDatabase = {
-  'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca' },
-  '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com' },
-  '5x6rvqp': { userID:'user3RandomID', url:'https://wikipedia.org' }
+  'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)'},
+  '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)'},
+  '5x6rvqp': { userID:'user3RandomID', url:'https://wikipedia.org', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)' }
 };
 
 const users = {
@@ -58,9 +58,9 @@ function urlsForUser(id) {
   const shortURLs = Object.keys(urlDatabase);
   for (const shortURL of shortURLs) {
     if (urlDatabase[shortURL].userID === id) {
-      urls[shortURL] = urlDatabase[shortURL].url;
-    }
-  }
+      urls[shortURL] = urlDatabase[shortURL];
+    };
+  };
   return urls;
 }
 
@@ -75,10 +75,9 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    res.status(400).send('Invalid email or password');
-    if (getUser(email)) {
-      res.status(400).send('Email already in use');
-    };
+    return res.status(400).send('Invalid email or password');
+  } else if (getUser(email)) {
+    return res.status(400).send('Email already in use');
   } else {
     const newUser = {
       id: generateRandomStr(),
@@ -130,12 +129,12 @@ app.post('/login', (req, res) => {
 
 app.get('/urls', (req, res) => {
   let templateVars = {
-    urls: urlDatabase,
     user: users[req.session.user_id]
   };
   if (req.session.user_id) {
     templateVars.urls = urlsForUser(req.session.user_id);
   }
+  console.log(templateVars)
   res.render('urls_index', templateVars);
 });
 
@@ -144,7 +143,8 @@ app.get('/urls/new', (req, res) => {
     res.redirect('/login');
   } else {
     let templateVars = { urls: urlDatabase,
-      user: users[req.session.user_id]};
+      user: users[req.session.user_id]
+    };
     res.render('urls_new', templateVars);
   };
 });
@@ -155,18 +155,18 @@ app.post('/urls', (req, res) => {
   const shortURL = generateRandomStr();
   urlDatabase[shortURL] = {
     userID: req.session.user_id,
-    url: req.body.longURL};
+    url: req.body.longURL,
+    date: new Date(),
+  };
+  console.log(urlDatabase[shortURL])
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/:id', (req, res) => {
   const { user_id } = req.session;
   const { id } = req.params;
-  console.log(id);
-  console.log(urlDatabase);
   if (!user_id) {
-
-    res.send('Please log in to edit URLs');
+    return res.send('Please log in to edit URLs');
   } else if (urlDatabase[id].userID !== user_id) {
     return res.send(`You don't have access to this page`)
   };
@@ -174,6 +174,7 @@ app.get('/urls/:id', (req, res) => {
     shortURL: id,
     longURL: urlDatabase[id].url,
     user: users[user_id],
+    date: urlDatabase[id].date
   };
   res.render('urls_show', templateVars);
 });
@@ -182,7 +183,7 @@ app.post('/urls/:id', (req, res) => {
   const { user_id } = req.session;
   const { id } = req.params;
   const { longURL } = req.body;
-  urlDatabase[id] = {userID: user_id, url:longURL};
+  urlDatabase[id] = {userID: user_id, url:longURL, date: urlDatabase[id].date};
   res.redirect(`/urls/${id}`);
 });
 

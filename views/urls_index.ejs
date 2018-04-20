@@ -9,13 +9,14 @@
   Please log in to view short URLs
   <% } else { %>
   <% for (const shortURL in urls) { %>
-  <p><%= shortURL %> : <%= urls[shortURL] %>
+  <p><%= shortURL %> : <%= urls[shortURL].url %></p>
+    <p>Date created : <%= urls[shortURL].date %></p>
       <form method="POST" action="/urls/<%= shortURL %>/delete">
         <button>Delete this</button>
       </form>
       <a href="urls/<%= shortURL %>"><button>Edit</button></a>
-      <%}%></p>
-      <a href="/urls/new">Shorten URL</a>
+      <%}%>
+      <p><a href="/urls/new">Shorten URL</a></p>
   <% } %>
 </body>
 </html>

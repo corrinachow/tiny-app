@@ -94,7 +94,7 @@ so that I can learn what content they like.
                   <li> ✅ the short URL's matching long URL</li>
                   <li> ✅ an edit button which makes a GET request to <code>/urls/:id</code></li>
                   <li> ✅ a delete button which makes a POST request to <code>/urls/:id/delete</code></li>
-                  <li>(<b>Stretch</b>) the date the short URL was created</li>
+                  <li>(<b>Stretch</b>) ✅ the date the short URL was created</li>
                   <li>(<b>Stretch</b>) the number of times the short URL was visited</li>
                   <li>(<b>Stretch</b>) the number number of unique visits for the short URL</li>
                 </ul>
