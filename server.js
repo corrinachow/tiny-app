@@ -19,9 +19,9 @@ app.get('/urls.json', (req, res) => {
 
 
 const urlDatabase = {
-  'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', timesVisited: 4},
-  '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', timesVisited: 2},
-  '5x6rvqp': { userID:'user3RandomID', url:'https://wikipedia.org', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)',timesVisited: 0 }
+  'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', ipOfVisitors: ['12.345.67.890', '12.345.67.890'] },
+  '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', ipOfVisitors: ['12.345.67.890']},
+  '5x6rvqp': { userID:'user3RandomID', url:'https://wikipedia.org', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', ipOfVisitors: ['01.234.56.789', '12.345.67.890', '12.345.67.890']}
 };
 
 const users = {
@@ -63,6 +63,10 @@ function urlsForUser(id) {
     };
   };
   return urls;
+}
+
+function getUnique(value, index, element) {
+  return element.indexOf(value) === index;
 }
 
 app.get('/register', (req, res) => {
@@ -158,16 +162,16 @@ app.post('/urls', (req, res) => {
     userID: req.session.user_id,
     url: req.body.longURL,
     date: new Date(),
-    timesVisited: 0
+    ipOfVisitors: []
   };
   console.log(urlDatabase[shortURL])
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/:id', (req, res) => {
-  console.log(urlDatabase)
   const { user_id } = req.session;
   const { id } = req.params;
+  const uniqueVisitors = (urlDatabase[id].ipOfVisitors).filter(getUnique)
   if (!user_id) {
     return res.send('Please log in to edit URLs');
   } else if (urlDatabase[id].userID !== user_id) {
@@ -178,12 +182,14 @@ app.get('/urls/:id', (req, res) => {
     longURL: urlDatabase[id].url,
     user: users[user_id],
     date: urlDatabase[id].date,
-    timesVisited: urlDatabase[id].timesVisited
+    timesVisited: (urlDatabase[id].ipOfVisitors).length,
+    uniqueVisits: uniqueVisitors.length
   };
   res.render('urls_show', templateVars);
 });
 
 app.post('/urls/:id', (req, res) => {
+
   const { user_id } = req.session;
   const { id } = req.params;
   const { longURL } = req.body;
@@ -194,8 +200,7 @@ app.post('/urls/:id', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const { shortURL } = req.params;
   const longURL = urlDatabase[shortURL].url;
-  urlDatabase[shortURL].timesVisited += 1;
-  console.log(urlDatabase)
+  urlDatabase[shortURL].ipOfVisitors.push(req.ip);
   res.redirect(longURL);
 });
 

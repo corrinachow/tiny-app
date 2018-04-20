@@ -9,6 +9,7 @@
   <p>Date created: <%= date %></p>
   <p><a href="http://localhost:8080/u/<%= shortURL %>">http://localhost:8080/u/<%= shortURL %></a> &xrarr; <%= longURL %></p>
   <p>Times visited: <%=timesVisited%></p>
+  <p>Unique visits: <%=uniqueVisits%></p>
   <form method="POST" action="/urls/<%= shortURL %>">
     <input type="text" name="longURL" value="<%= longURL %>">
     <button>Update</button>
