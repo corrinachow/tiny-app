@@ -17,6 +17,9 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+//TO DO
+//make sure that the longURL is an actual URL
+
 
 const urlDatabase = {
   'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', ipOfVisitors: ['12.345.67.890', '12.345.67.890'] },
@@ -77,12 +80,19 @@ app.get('/register', (req, res) => {
   res.render('urls_register');
 });
 
+function validateEmail(email) {
+  const re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+  return re.test(email.toLowerCase());
+}
+
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).send('Invalid email or password');
   } else if (getUser(email)) {
     return res.status(400).send('Email already in use');
+  } else if(!validateEmail(email)) {
+    return res.status(400).send('Please enter a valid email');
   } else {
     const newUser = {
       id: generateRandomStr(),
@@ -171,29 +181,51 @@ app.post('/urls', (req, res) => {
 app.get('/urls/:id', (req, res) => {
   const { user_id } = req.session;
   const { id } = req.params;
-  const uniqueVisitors = (urlDatabase[id].ipOfVisitors).filter(getUnique)
-  if (!user_id) {
-    return res.send('Please log in to edit URLs');
-  } else if (urlDatabase[id].userID !== user_id) {
-    return res.send(`You don't have access to this page`)
-  };
   let templateVars = {
     shortURL: id,
-    longURL: urlDatabase[id].url,
-    user: users[user_id],
-    date: urlDatabase[id].date,
-    timesVisited: (urlDatabase[id].ipOfVisitors).length,
-    uniqueVisits: uniqueVisitors.length
+    longURL: '',
+    user: '',
+    date: '',
+    timesVisited: '',
+    uniqueVisits: '',
+    invalidURL: false,
+    noUser: false,
+    isNotAuthUser: false
   };
-  res.render('urls_show', templateVars);
+  if (!urlDatabase.hasOwnProperty(id)) {
+    console.log('URL does not exist')
+    templateVars.invalidURL = true;
+    return res.render('urls_show', templateVars)
+  } else if (!user_id) {
+    console.log('User not logged in')
+    templateVars.noUser = true;
+    console.log(templateVars)
+    return res.render('urls_show', templateVars)
+  } else if (urlDatabase[id].userID !== user_id) {
+    console.log('User does not have access')
+    templateVars.isNotAuthUser = true;
+    return res.render('urls_show', templateVars)
+  } else {
+    templateVars.longURL = urlDatabase[id].url;
+    templateVars.user = users[user_id];
+    templateVars.date = urlDatabase[id].date;
+    templateVars.timesVisited = (urlDatabase[id].ipOfVisitors).length;
+    const uniqueVisitors = (urlDatabase[id].ipOfVisitors).filter(getUnique);
+    templateVars.uniqueVisits = uniqueVisitors.length;
+  }
+  return res.render('urls_show', templateVars);
 });
 
 app.post('/urls/:id', (req, res) => {
-
   const { user_id } = req.session;
   const { id } = req.params;
   const { longURL } = req.body;
-  urlDatabase[id] = {userID: user_id, url:longURL, date: urlDatabase[id].date};
+  urlDatabase[id] = {
+    userID: user_id,
+    url:longURL,
+    date: urlDatabase[id].date,
+    ipOfVisitors: urlDatabase[id].ipOfVisitors
+  };
   res.redirect(`/urls/${id}`);
 });
 

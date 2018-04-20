@@ -96,7 +96,7 @@ so that I can learn what content they like.
                   <li> ✅ a delete button which makes a POST request to <code>/urls/:id/delete</code></li>
                   <li>(<b>Stretch</b>) ✅ the date the short URL was created</li>
                   <li>(<b>Stretch</b>) ✅ the number of times the short URL was visited</li>
-                  <li>(<b>Stretch</b>) the number  of unique visits for the short URL</li>
+                  <li>(<b>Stretch</b>) ✅ the number  of unique visits for the short URL</li>
                 </ul>
               </li>
               <li>(<b>Minor</b>) ✅ a link to "Create a New Short Link" which makes a GET request to <code>/urls/new</code></li>
