@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 const app = express();
@@ -17,22 +17,23 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+
 const urlDatabase = {
-  'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)'},
-  '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)'},
-  '5x6rvqp': { userID:'user3RandomID', url:'https://wikipedia.org', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)' }
+  'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', timesVisited: 4},
+  '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', timesVisited: 2},
+  '5x6rvqp': { userID:'user3RandomID', url:'https://wikipedia.org', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)',timesVisited: 0 }
 };
 
 const users = {
   'userRandomID': {
     id: 'userRandomID',
     email: 'user@example.com',
-    password: bcrypt.hashSync('purple-monkey-dinosaur', 10)
+    password: bcrypt.hashSync('password', 10)
   },
   'user2RandomID': {
     id: 'user2RandomID',
     email: 'user2@example.com',
-    password: bcrypt.hashSync('dishwasher-funk', 10)
+    password: bcrypt.hashSync('password', 10)
   },
   'user3RandomID': {
     id: 'user3RandomID',
@@ -157,12 +158,14 @@ app.post('/urls', (req, res) => {
     userID: req.session.user_id,
     url: req.body.longURL,
     date: new Date(),
+    timesVisited: 0
   };
   console.log(urlDatabase[shortURL])
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/:id', (req, res) => {
+  console.log(urlDatabase)
   const { user_id } = req.session;
   const { id } = req.params;
   if (!user_id) {
@@ -174,7 +177,8 @@ app.get('/urls/:id', (req, res) => {
     shortURL: id,
     longURL: urlDatabase[id].url,
     user: users[user_id],
-    date: urlDatabase[id].date
+    date: urlDatabase[id].date,
+    timesVisited: urlDatabase[id].timesVisited
   };
   res.render('urls_show', templateVars);
 });
@@ -188,7 +192,10 @@ app.post('/urls/:id', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL].url;
+  const { shortURL } = req.params;
+  const longURL = urlDatabase[shortURL].url;
+  urlDatabase[shortURL].timesVisited += 1;
+  console.log(urlDatabase)
   res.redirect(longURL);
 });
 

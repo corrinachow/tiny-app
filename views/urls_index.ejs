@@ -11,6 +11,7 @@
   <% for (const shortURL in urls) { %>
   <p><%= shortURL %> : <%= urls[shortURL].url %></p>
     <p>Date created : <%= urls[shortURL].date %></p>
+    <p>Times visited : <%= urls[shortURL].timesVisited %></p>
       <form method="POST" action="/urls/<%= shortURL %>/delete">
         <button>Delete this</button>
       </form>

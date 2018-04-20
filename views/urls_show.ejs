@@ -6,8 +6,9 @@
     <% include ./partials/_header %>
 <body>
   <h1>ShortURL: <%= shortURL %></h1>
-  <p>Date create: <%= date %></p>
-  <p><a href="<%= longURL %>">http://localhost:8080/u/<%= shortURL %></a> &xrarr; <%= longURL %></p>
+  <p>Date created: <%= date %></p>
+  <p><a href="http://localhost:8080/u/<%= shortURL %>">http://localhost:8080/u/<%= shortURL %></a> &xrarr; <%= longURL %></p>
+  <p>Times visited: <%=timesVisited%></p>
   <form method="POST" action="/urls/<%= shortURL %>">
     <input type="text" name="longURL" value="<%= longURL %>">
     <button>Update</button>
