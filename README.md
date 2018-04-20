@@ -5,8 +5,13 @@ TinyApp is a full stack web application build with Node and Express that allows 
 ## Final Product
 
 ![Home screen of logged in user](./docs/urls-page.png)
+Home screen of logged in user
+
 ![Create new short URL page](./docs/create-page.png)
+Create new short URL page
+
 ![Edit existing short URL page](./docs/edit-page.png)
+Edit existing short URL page
 
 ## Dependencies
 
@@ -45,14 +50,14 @@ so that I can learn what content they like.
     <ul>
       <li>if a user is logged in, the header shows:
         <ul>
-          <li>the user's email</li> [x]
-          <li>a logout button which makes a POST request to <code>/logout</code></li> [x]
+          <li>✅ the user's email</li>
+          <li>✅ a logout button which makes a POST request to <code>/logout</code></li>
         </ul>
       </li>
       <li>if a user is not logged in, the header shows:
         <ul>
-          <li>a link to the login page (<code>/login</code>)</li> [x]
-          <li>a link to the registration page (<code>/register</code>)</li> [x]
+          <li> ✅ a link to the login page (<code>/login</code>)</li>
+          <li> ✅ a link to the registration page (<code>/register</code>)</li>
         </ul>
       </li>
     </ul>
@@ -66,12 +71,12 @@ so that I can learn what content they like.
     <ul>
       <li>if user is logged in:
         <ul>
-          <li>(<b>Minor</b>) redirect to <code>/urls</code></li>
+          <li>(<b>Minor</b>) ✅ redirect to <code>/urls</code></li>
         </ul>
       </li>
       <li>if user is not logged in:
         <ul>
-          <li>(<b>Minor</b>) redirect to <code>/login</code> [x]
+          <li>(<b>Minor</b>) ✅ redirect to <code>/login</code>
         </ul>
       </li>
     </ul>
@@ -82,41 +87,41 @@ so that I can learn what content they like.
         <ul>
           <li>returns HTML with:
             <ul>
-              <li>the site header (see Display Requirements above)</li> [x]
-              <li>a list (or table) of URLs the user has created, each list item containing:
+              <li>✅ the site header (see Display Requirements above)</li>
+              <li>✅ a list (or table) of URLs the user has created, each list item containing:
                 <ul>
-                  <li>a short URL</li> [x]
-                  <li>the short URL's matching long URL</li> [x]
-                  <li>an edit button which makes a GET request to <code>/urls/:id</code></li> [x]
-                  <li>a delete button which makes a POST request to <code>/urls/:id/delete</code></li> [x]
+                  <li> ✅ a short URL</li>
+                  <li> ✅ the short URL's matching long URL</li>
+                  <li> ✅ an edit button which makes a GET request to <code>/urls/:id</code></li>
+                  <li> ✅ a delete button which makes a POST request to <code>/urls/:id/delete</code></li>
                   <li>(<b>Stretch</b>) the date the short URL was created</li>
                   <li>(<b>Stretch</b>) the number of times the short URL was visited</li>
                   <li>(<b>Stretch</b>) the number number of unique visits for the short URL</li>
                 </ul>
               </li>
-              <li>(<b>Minor</b>) a link to "Create a New Short Link" which makes a GET request to <code>/urls/new</code></li> [x]
+              <li>(<b>Minor</b>) ✅ a link to "Create a New Short Link" which makes a GET request to <code>/urls/new</code></li>
             </ul>
             <li>if user is not logged in:
               <ul>
-                <li>returns HTML with a relevant error message</li> [x]
+                <li>returns HTML with a relevant error message</li>
           </li>
         </ul>
         <li><b><code>GET /urls/new</code></b>
           <ul>
             <li>if user is logged in:
               <ul>
-                <li>returns HTML with:</li>
-                <li>the site header (see Display Requirements above)</li> [x]
+                <li> ✅ returns HTML with:</li>
+                <li> ✅ the site header (see Display Requirements above)</li>
                 <li>a form which contains:
                   <ul>
-                    <li>a text input field for the original (long) <code>URL</code></li> [x]
-                    <li>a submit button which makes a POST request to <code>/url</code></li> [x]
+                    <li> ✅ a text input field for the original (long) <code>URL</code></li>
+                    <li> ✅ a submit button which makes a POST request to <code>/url</code></li>
                   </ul>
                 </li>
               </ul>
-            <li>if user is not logged in:
+            <li> ✅ if user is not logged in:
               <ul>
-                <li>redirects to the <code>/login</li> page</li> [x]
+                <li> ✅ redirects to the <code>/login</li> page</li>
       </li>
     </ul>
   </li>
