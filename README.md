@@ -4,13 +4,13 @@ TinyApp is a full stack web application build with Node and Express that allows 
 
 ## Final Product
 
-![Home screen of logged in user](./docs/urls-page.png)
+![Home screen of logged in user](./docs/urls-main-page.png)
 Home screen of logged in user
 
-![Create new short URL page](./docs/create-page.png)
+![Create new short URL page](./docs/create-new-short-url-page.png)
 Create new short URL page
 
-![Edit existing short URL page](./docs/edit-page.png)
+![Edit existing short URL page](./docs/edit-existing-url-page.png)
 Edit existing short URL page
 
 ## Dependencies
