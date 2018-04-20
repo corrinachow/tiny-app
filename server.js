@@ -17,10 +17,6 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
-//TO DO
-//make sure that the longURL is an actual URL
-
-
 const urlDatabase = {
   'b2xVn2': { userID:'userRandomID', url:'http://www.lighthouselabs.ca', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', ipOfVisitors: ['12.345.67.890', '12.345.67.890'] },
   '9sm5xK': { userID:'user2RandomID', url:'http://www.google.com', date: 'Thu Apr 19 2018 21:32:50 GMT-0400 (EDT)', ipOfVisitors: ['12.345.67.890']},
@@ -83,6 +79,11 @@ app.get('/register', (req, res) => {
 function validateEmail(email) {
   const re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
   return re.test(email.toLowerCase());
+}
+
+function validateWebsite(longURL) {
+  const re = /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/i;
+  return re.test(longURL.toLowerCase());
 }
 
 app.post('/register', (req, res) => {
@@ -167,10 +168,14 @@ app.get('/urls/new', (req, res) => {
 /* MAKES NEW URL */
 
 app.post('/urls', (req, res) => {
+  const { longURL } = req.body;
+  if (!validateWebsite(longURL)) {
+    return res.status(400).send('Please enter a valid URL')
+  };
   const shortURL = generateRandomStr();
   urlDatabase[shortURL] = {
     userID: req.session.user_id,
-    url: req.body.longURL,
+    url: longURL,
     date: new Date(),
     ipOfVisitors: []
   };
@@ -220,6 +225,9 @@ app.post('/urls/:id', (req, res) => {
   const { user_id } = req.session;
   const { id } = req.params;
   const { longURL } = req.body;
+  if (!validateWebsite(longURL)) {
+    return res.status(400).send('Please enter a valid URL')
+  };
   urlDatabase[id] = {
     userID: user_id,
     url:longURL,
