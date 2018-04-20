@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>TinyApp</title>
+<title>TinyApp</title>
 </head>
-<header>
     <% include ./partials/_header %>
-</header>
 <body>
   <% if (!user) { %>
   Please log in to view short URLs
@@ -13,7 +11,7 @@
   <% for (const shortURL in urls) { %>
   <p><%= shortURL %> : <%= urls[shortURL] %>
       <form method="POST" action="/urls/<%= shortURL %>/delete">
-        <button>Delet this</button>
+        <button>Delete this</button>
       </form>
       <a href="urls/<%= shortURL %>"><button>Edit</button></a>
       <%}%></p>

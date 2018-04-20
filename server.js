@@ -1,8 +1,6 @@
-// server.js
-
 const express = require('express');
 const bodyParser = require('body-parser');
-var cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt');
 
 const app = express();
@@ -14,11 +12,6 @@ app.use(cookieSession({
   name: 'session',
   keys: ['dfshjkaf90dsafjk']
 }));
-
-app.use((req, res, next) => {
-  // console.log(`${req.session}`);
-  next();
-});
 
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
@@ -47,17 +40,6 @@ const users = {
     password: bcrypt.hashSync('tests', 10)
   }
 };
-
-// app.get('/', (req, res) =>
-//   if(req.session.NAMEOFKEY) {
-//     res.render(...)
-//   } else if (req.session.NAMEOFKEY) {
-//     res.render(...)
-//   } else {
-//     res.render('/register')
-//   }
-// });
-
 
 /* REGISTRATION */
 
@@ -96,8 +78,7 @@ app.post('/register', (req, res) => {
     res.status(400).send('Invalid email or password');
     if (getUser(email)) {
       res.status(400).send('Email already in use');
-    }
-    //make specific to cases
+    };
   } else {
     const newUser = {
       id: generateRandomStr(),
@@ -120,9 +101,11 @@ app.post('/logout', (req, res) => {
 /* HOME PAGE */
 
 app.get('/' , (req, res) => {
-  let templateVars = { urls: urlDatabase,
-  user: users[req.session.user_id]}
-  res.render('urls_index', templateVars)
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 /* LOGIN FORM */
@@ -136,8 +119,6 @@ app.post('/login', (req, res) => {
   //user returns either user Obj or false;
   const user = getUser(email);
   if (user && bcrypt.compareSync(password, user.password)) {
-    //when setting cookies, always use just ID
-
     req.session.user_id = user.id;
     res.redirect('/urls')
   } else {
