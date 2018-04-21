@@ -166,7 +166,7 @@ app.post('/register', (req, res) => {
 
 // Clears cookies on logout
 app.post('/logout', (req, res) => {
-  delete req.session.user_id;
+  req.session = null;
   return res.redirect('/urls');
 });
 
