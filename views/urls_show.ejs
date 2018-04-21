@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background: #ddd">
 <head>
 <title>TinyApp</title>
 </head>
     <% include ./partials/_header %>
 <body>
   <% if(noUser) { %>
-  fdsahfdsahjfsdhjfds
   <h1>You must log in to edit short URLs</h1>
   <% } else if(invalidURL) { %>
   <h1>Error <%= shortURL %> does not exist</h1>
